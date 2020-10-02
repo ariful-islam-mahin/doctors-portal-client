@@ -7,11 +7,10 @@ const Appointment = () => {
     const [date, changeDate] = useState(new Date());
     const [doctorDetail, setDoctorDetail] = useState({});
     const [doctors, setDoctors] = useState([]);
-    // const [patientInfo, setPatientInfo] = useState({});
     const [open, setOpen] = React.useState(false);
 
     useEffect(() => {
-        fetch('http://localhost:5000/doctors')
+        fetch('http://localhost:4000/doctors')
         .then(res => res.json())
         .then(data => setDoctors(data))
     }, []);
@@ -25,23 +24,30 @@ const Appointment = () => {
         setOpen(false);
     };
 
-    // const handleSubmit = (data) => {
-    //     const patient = {...patientInfo};
-    //     patient.name = data.body.name.value
-    //     fetch('http://localhost:5000/addPatient', {
-    //         method: 'POST',
-    //         headers: {'Content-Type': 'application/json'},
-    //         body: JSON.stringify(patient)
-    //     })
-    //     .then(res => res.json())
-    //     .then(data => {
-    //         if(data){
-    //             alert('patient added')
-    //         }
-    //     })
+    const handleSubmit = (event) => {
+        const patient = {
+            name : event.target.elements.name.value,
+            email : event.target.elements.email.value,
+            number : event.target.elements.number.value,
+            time : event.target.elements.time.value,
+            date : event.target.elements.date.value,
+            doctor: doctorDetail.title
+        };
 
-    //     data.preventDefault();
-    // }
+        fetch('http://localhost:4000/addPatient', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(patient)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data){
+                alert('patient added')
+            }
+        })
+
+        event.preventDefault();
+    }
     // const handleAddDoctor = () => {
     //     fetch('http://localhost:5000/addDoctors', {
     //         method:'POST',
@@ -84,7 +90,7 @@ const Appointment = () => {
                 }
                 <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle className='text-center' id="form-dialog-title">{doctorDetail.title}</DialogTitle>
-                        <form >
+                        <form onSubmit={handleSubmit}>
                             <DialogContent>
                                     <TextField className="form-control my-2" name="name" id="filled-size-small" size="small"
                                     placeholder="Your Name" 
